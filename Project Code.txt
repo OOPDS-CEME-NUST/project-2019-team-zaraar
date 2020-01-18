@@ -1,0 +1,161 @@
+import RPi.GPIO as GPIO
+from gpiozero import InputDevice, OutputDevice, LED
+from time import sleep, time
+import os
+
+trig = OutputDevice(4)
+echo = InputDevice(17)
+led = LED(27)
+
+sleep(2)
+
+def speech(text):
+    os.system("espeak ' " + text + " centimeters " " ' ")
+
+
+def get_pulse_time():
+    trig.on()
+    sleep(0.00001)
+    trig.off()
+
+    while echo.is_active == False:
+        pulse_start = time()
+
+    while echo.is_active == True:
+        pulse_end = time()
+
+    sleep(0.06)
+
+    try:
+        return pulse_end - pulse_start
+    except:
+        return 0.02
+
+def calculate_distance(duration):
+    speed = 343
+    d = speed * duration * 100 / 2
+    distance = int(d)
+    distance_in_str = str(distance)
+    speech(distance_in_str)
+    return distance
+
+def calculate_vibration(distance):
+    if (distance > 50):
+        return 0
+    else:
+        return 1
+
+servoPIN = 21
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(servoPIN, GPIO.OUT)
+
+p = GPIO.PWM(servoPIN, 50) # GPIO 17 for PWM with 50Hz
+p.start(2.5) # Initialization
+try:
+  while True:
+
+    p.ChangeDutyCycle(5)
+    sleep(0.25)
+    p.ChangeDutyCycle(0)
+    duration = get_pulse_time()
+    distance = calculate_distance(duration)
+    vibration = calculate_vibration(distance)
+    print(round(duration,3),distance,vibration)
+    if (vibration == 1 ):
+        led.on()
+        sleep(0.5)
+    else:
+        led.off()
+        sleep(0.5)
+
+
+    p.ChangeDutyCycle(7.5)
+    sleep(0.25)
+    p.ChangeDutyCycle(0)
+    duration = get_pulse_time()
+    distance = calculate_distance(duration)
+    vibration = calculate_vibration(distance)
+    print(round(duration,3),distance,vibration)
+    if (vibration == 1 ):
+        led.on()
+        sleep(0.5)
+    else:
+        led.off()
+        sleep(0.5)
+
+        
+    p.ChangeDutyCycle(12.5)
+    sleep(0.25)
+    p.ChangeDutyCycle(0)
+    duration = get_pulse_time()
+    distance = calculate_distance(duration)
+    vibration = calculate_vibration(distance)
+    print(round(duration,3),distance,vibration)
+    if (vibration == 1 ):
+        led.on()
+        sleep(0.5)
+    else:
+        led.off()
+        sleep(0.5)
+
+        
+    p.ChangeDutyCycle(10)
+    sleep(0.25)
+    p.ChangeDutyCycle(0)
+    duration = get_pulse_time()
+    distance = calculate_distance(duration)
+    vibration = calculate_vibration(distance)
+    print(round(duration,3),distance,vibration)
+    if (vibration == 1 ):
+        led.on()
+        sleep(0.5)
+    else:
+        led.off()
+        sleep(0.5)
+
+    p.ChangeDutyCycle(7.5)
+    sleep(0.25)
+    p.ChangeDutyCycle(0)
+    duration = get_pulse_time()
+    distance = calculate_distance(duration)
+    vibration = calculate_vibration(distance)
+    print(round(duration,3),distance,vibration)
+    if (vibration == 1 ):
+        led.on()
+        sleep(0.5)
+    else:
+        led.off()
+        sleep(0.5)
+
+    p.ChangeDutyCycle(5)
+    sleep(0.25)
+    p.ChangeDutyCycle(0)
+    duration = get_pulse_time()
+    distance = calculate_distance(duration)
+    vibration = calculate_vibration(distance)
+    print(round(duration,3),distance,vibration)
+    if (vibration == 1 ):
+        led.on()
+        sleep(0.5)
+    else:
+        led.off()
+        sleep(0.5)
+
+    p.ChangeDutyCycle(2.5)
+    sleep(0.25)
+    p.ChangeDutyCycle(0)
+    duration = get_pulse_time()
+    distance = calculate_distance(duration)
+    vibration = calculate_vibration(distance)
+    print(round(duration,3),distance,vibration)
+    if (vibration == 1 ):
+        led.on()
+        sleep(0.5)
+    else:
+        led.off()
+        sleep(0.5)
+    
+except KeyboardInterrupt:
+  p.stop()
+  GPIO.cleanup()
+GPIO.setwarnings(False)
